@@ -1,23 +1,3 @@
-<#
-.Synopsis
-    Perform display name tagging on the query responses from the Microsoft Graph
-.Description
-    This function evaluates whether tags are present in the display name, and if so, adds the tag values to the object returned
-.PARAMETER Tags
-    Client ID for the Azure AD service principal with Conditional Access Graph permissions
-.PARAMETER QueryResponse
-    Client secret for the Azure AD service principal with Conditional Access Graph permissions
-.INPUTS
-    None
-.OUTPUTS
-    None
-.NOTES
-
-.Example
-    Invoke-WTPropertyTagging -Tags $Tags -QueryResponse $QueryResponse
-    $QueryResponse | Invoke-WTPropertyTagging -Tags $Tags
-#>
-
 function Invoke-WTPropertyTagging {
     [cmdletbinding()]
     param (

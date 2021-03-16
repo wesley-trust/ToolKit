@@ -1,19 +1,3 @@
-<#
-#Script name: Invoke-WTDependencyCheck
-#Creator: Wesley Trust
-#Date: 2017-12-04
-#Revision: 3
-#References:
-
-.Synopsis
-    Function that checks if a required module is installed, and installs if nessessary.
-.Description
-
-.Example
-    Invoke-WTDependencyCheck -Modules "AzureAD"
-.Example
-
-#>
 function Invoke-WTDependencyCheck() {
     [CmdletBinding()]
     Param(

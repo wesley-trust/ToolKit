@@ -1,19 +1,3 @@
-<#
-#Script name: New-WTRandomString
-#Creator: Wesley Trust
-#Date: 2017-12-03
-#References: 
-
-.Synopsis
-    Function that creates a random string (potential password), with default length of 12 characters and a max of 92.
-.Description
-
-.Example
-    New-RandomPassword -CharacterLength $Length
-.Example
-    
-#>
-
 function New-WTRandomString() {
     Param(
         [Parameter(
