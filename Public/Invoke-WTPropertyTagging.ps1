@@ -19,7 +19,8 @@ function Invoke-WTPropertyTagging {
             ValueFromPipeLine = $true,
             HelpMessage = "The input object"
         )]
-        [psobject]$QueryResponse
+        [alias("QueryResponse")]
+        [psobject]$InputObject
     )
     Begin {
         try {
@@ -35,40 +36,40 @@ function Invoke-WTPropertyTagging {
     }
     Process {
         try {
-
-            # Get Query properties
-            $QueryProperties = ($QueryResponse | Get-Member -MemberType NoteProperty).name 
             
-            foreach ($Query in $QueryResponse) {
+            foreach ($Object in $InputObject) {
                 
-                # Split out Query information by defined delimeter(s) and tag(s)
-                $QueryPropertySplit = ($Query.$PropertyToTag.split($MajorDelimiter)).Split($MinorDelimiter)
+                # Get Object properties
+                $ObjectProperties = ($Object | Get-Member -MemberType NoteProperty).name 
+                
+                # Split out Object information by defined delimiter(s) and tag(s)
+                $ObjectPropertySplit = ($Object.$PropertyToTag.split($MajorDelimiter)).Split($MinorDelimiter)
 
-                $TaggedQueryResponse = [ordered]@{}
+                $TaggedInputObject = [ordered]@{}
                 foreach ($Tag in $Tags) {
 
                     # If the tag exists in the display name, 
-                    if ($QueryPropertySplit -contains $Tag) {
+                    if ($ObjectPropertySplit -contains $Tag) {
 
                         # Get the object index, increment by one to obtain the tag's value index
-                        $TagIndex = $QueryPropertySplit.IndexOf($Tag)
+                        $TagIndex = $ObjectPropertySplit.IndexOf($Tag)
                         $TagValueIndex = $TagIndex + 1
-                        $TagValue = $QueryPropertySplit[$TagValueIndex]
+                        $TagValue = $ObjectPropertySplit[$TagValueIndex]
                         
                         # Add tag to hashtable
-                        $TaggedQueryResponse.Add($Tag, $TagValue)
+                        $TaggedInputObject.Add($Tag, $TagValue)
                     }
                     else {
-                        $TaggedQueryResponse.Add($Tag, $null)
+                        $TaggedInputObject.Add($Tag, $null)
                     }
                 }
-                            
+
                 # Append all properties and return object
-                foreach ($Property in $QueryProperties) {
-                    $TaggedQueryResponse.Add("$Property", $Query.$Property)
+                foreach ($Property in $ObjectProperties) {
+                    $TaggedInputObject.Add("$Property", $Object.$Property)
                 }
 
-                [pscustomobject]$TaggedQueryResponse
+                [pscustomobject]$TaggedInputObject
             }
         }
         catch {
@@ -77,6 +78,12 @@ function Invoke-WTPropertyTagging {
         }
     }
     End {
-        
+        try {
+
+        }
+        catch {
+            Write-Error -Message $_.Exception
+            throw $_.exception
+        }
     }
 }
