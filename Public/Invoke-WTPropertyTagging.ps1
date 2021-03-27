@@ -42,34 +42,42 @@ function Invoke-WTPropertyTagging {
                 # Get Object properties
                 $ObjectProperties = ($Object | Get-Member -MemberType NoteProperty).name 
                 
-                # Split out Object information by defined delimiter(s) and tag(s)
-                $ObjectPropertySplit = ($Object.$PropertyToTag.split($MajorDelimiter)).Split($MinorDelimiter)
+                # Check if the property exists in the list of the object's properties
+                if ($PropertyToTag -in $ObjectProperties) {
+                    
+                    # Split out Object information by defined delimiter(s) and tag(s)
+                    $ObjectPropertySplit = ($Object.$PropertyToTag.split($MajorDelimiter)).Split($MinorDelimiter)
 
-                $TaggedInputObject = [ordered]@{}
-                foreach ($Tag in $Tags) {
+                    $TaggedInputObject = [ordered]@{}
+                    foreach ($Tag in $Tags) {
 
-                    # If the tag exists in the display name, 
-                    if ($ObjectPropertySplit -contains $Tag) {
+                        # If the tag exists in the display name, 
+                        if ($ObjectPropertySplit -contains $Tag) {
 
-                        # Get the object index, increment by one to obtain the tag's value index
-                        $TagIndex = $ObjectPropertySplit.IndexOf($Tag)
-                        $TagValueIndex = $TagIndex + 1
-                        $TagValue = $ObjectPropertySplit[$TagValueIndex]
+                            # Get the object index, increment by one to obtain the tag's value index
+                            $TagIndex = $ObjectPropertySplit.IndexOf($Tag)
+                            $TagValueIndex = $TagIndex + 1
+                            $TagValue = $ObjectPropertySplit[$TagValueIndex]
                         
-                        # Add tag to hashtable
-                        $TaggedInputObject.Add($Tag, $TagValue)
+                            # Add tag to hashtable
+                            $TaggedInputObject.Add($Tag, $TagValue)
+                        }
+                        else {
+                            $TaggedInputObject.Add($Tag, $null)
+                        }
                     }
-                    else {
-                        $TaggedInputObject.Add($Tag, $null)
+
+                    # Append all properties and return object
+                    foreach ($Property in $ObjectProperties) {
+                        $TaggedInputObject.Add("$Property", $Object.$Property)
                     }
-                }
 
-                # Append all properties and return object
-                foreach ($Property in $ObjectProperties) {
-                    $TaggedInputObject.Add("$Property", $Object.$Property)
+                    [pscustomobject]$TaggedInputObject
                 }
-
-                [pscustomobject]$TaggedInputObject
+                else {
+                    $ErrorMessage = "The property to tag '$PropertyToTag', does not exist in the input object"
+                    Write-Error $ErrorMessage
+                }
             }
         }
         catch {
