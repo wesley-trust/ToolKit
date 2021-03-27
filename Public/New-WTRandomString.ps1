@@ -1,4 +1,5 @@
-function New-WTRandomString() {
+function New-WTRandomString {
+    [cmdletbinding()]
     Param(
         [Parameter(
             Mandatory = $false,
@@ -23,7 +24,12 @@ function New-WTRandomString() {
 
     Begin {
         try {
-
+            
+            # Variables
+            $LowerCase = ([char[]](97..122))
+            $UpperCase = ([char[]](65..90))
+            $Numbers = ([char[]](48..57))
+            $Special = ([char[]](33..47))
         }
         catch {
             Write-Error -Message $_.Exception
@@ -33,12 +39,6 @@ function New-WTRandomString() {
     
     Process {
         try {
-
-            # Character set variables
-            $LowerCase = ([char[]](97..122))
-            $UpperCase = ([char[]](65..90))
-            $Numbers = ([char[]](48..57))
-            $Special = ([char[]](33..47))
 
             # Update length to reflect array start position
             $CharacterLength = $CharacterLength - 1
@@ -55,19 +55,19 @@ function New-WTRandomString() {
             }
 
             # Randomise set
-            $RandomisedSet = $CharacterSet | Sort-Object {Get-Random}
+            $RandomisedSet = $CharacterSet | Sort-Object { Get-Random }
             
             # Specify length of object from randomised set
             $Object = $RandomisedSet[0..$CharacterLength]
 
             # Randomise object
-            $Object = $Object | Sort-Object {Get-Random}
+            $Object = $Object | Sort-Object { Get-Random }
             
             # Join objects to form string
-            $String = $Object -join ""
+            $RandomString = $Object -join ""
             
             # Return string
-            return $string
+            $RandomString
         }
         Catch {
             Write-Error -Message $_.exception
@@ -75,6 +75,12 @@ function New-WTRandomString() {
         }
     }
     End {
-        
+        try {
+            
+        }
+        catch {
+            Write-Error -Message $_.Exception
+            throw $_.exception
+        }
     }
 }
