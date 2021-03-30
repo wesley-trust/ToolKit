@@ -3,9 +3,9 @@ function New-WTRandomString {
     Param(
         [Parameter(
             Mandatory = $false,
-            HelpMessage = "Specify the character length (maximum 92)"
+            HelpMessage = "Specify the character length (maximum 256)"
         )]
-        [ValidateRange(1, 92)]
+        [ValidateRange(1, 256)]
         [int]
         $CharacterLength = 12,
         [Parameter(
@@ -21,7 +21,6 @@ function New-WTRandomString {
         [switch]
         $Alphanumeric
     )
-
     Begin {
         try {
             
@@ -36,14 +35,10 @@ function New-WTRandomString {
             throw $_.exception
         }
     }
-    
     Process {
         try {
 
-            # Update length to reflect array start position
-            $CharacterLength = $CharacterLength - 1
-            
-            # If simplified is specified
+            # Build the character sets
             if ($Simplified) {
                 $CharacterSet = $LowerCase + $UpperCase
             }
@@ -54,12 +49,12 @@ function New-WTRandomString {
                 $CharacterSet = $LowerCase + $UpperCase + $Numbers + $Special
             }
 
-            # Randomise set
-            $RandomisedSet = $CharacterSet | Sort-Object { Get-Random }
+            # For each character, randomise the set and return the first character
+            $Object = foreach ($Character in 1..$CharacterLength){
+                $RandomisedSet = $CharacterSet | Sort-Object { Get-Random }
+                $RandomisedSet[0]
+            }
             
-            # Specify length of object from randomised set
-            $Object = $RandomisedSet[0..$CharacterLength]
-
             # Randomise object
             $Object = $Object | Sort-Object { Get-Random }
             
