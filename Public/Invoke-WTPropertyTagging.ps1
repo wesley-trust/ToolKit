@@ -39,6 +39,11 @@ function Invoke-WTPropertyTagging {
             
             foreach ($Object in $InputObject) {
                 
+                # Remove any existing tags to prevent duplicate tags
+                foreach ($Tag in $Tags) {
+                    $Object.PSObject.Properties.Remove("$Tag")
+                }
+
                 # Get Object properties
                 $ObjectProperties = ($Object | Get-Member -MemberType NoteProperty).name 
                 
